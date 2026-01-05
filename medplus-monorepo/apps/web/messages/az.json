@@ -1,0 +1,29 @@
+{
+    "Common": {
+        "login": "Daxil ol",
+        "signup": "Qeydiyyat",
+        "search": "Axtarış",
+        "book_appointment": "Həkim qəbuluna yazıl",
+        "patient_portal": "Pasient Portalı",
+        "provider_login": "Həkim Girişi"
+    },
+    "Navigation": {
+        "doctors": "Həkimlər",
+        "hospitals": "Xəstəxanalar",
+        "services": "Xidmətlər",
+        "about": "Haqqımızda"
+    },
+    "Auth": {
+        "welcome_back": "Xoş gəlmisiniz",
+        "secure_login": "Təhlükəsiz Giriş",
+        "phone_label": "Mobil Nömrə",
+        "send_code": "Kodu Göndər",
+        "verify": "Təsdiqlə"
+    },
+    "Hero": {
+        "title": "Sizin Sağlamlığınız,\nBizim Prioritetimiz",
+        "subtitle": "Ölkənin ən yaxşı həkimləri və xəstəxanaları bir platformada. Onlayn növbə tutun, vaxtınıza qənaət edin.",
+        "cta_primary": "Həkim Tap",
+        "cta_secondary": "Xəstəxanalar"
+    }
+}
