@@ -5,25 +5,251 @@
         "search": "Axtarış",
         "book_appointment": "Həkim qəbuluna yazıl",
         "patient_portal": "Pasient Portalı",
-        "provider_login": "Həkim Girişi"
+        "provider_login": "Həkim Girişi",
+        "view_all": "Hamısına bax",
+        "learn_more": "Ətraflı",
+        "loading": "Yüklənir...",
+        "error": "Xəta baş verdi",
+        "success": "Uğurla tamamlandı",
+        "cancel": "Ləğv et",
+        "confirm": "Təsdiqlə",
+        "save": "Saxla",
+        "back": "Geri",
+        "next": "Növbəti",
+        "submit": "Göndər",
+        "close": "Bağla",
+        "available": "Mövcuddur",
+        "unavailable": "Mövcud deyil",
+        "today": "Bu gün",
+        "tomorrow": "Sabah",
+        "verified": "Təsdiqlənmiş",
+        "rating": "Reytinq",
+        "experience": "Təcrübə",
+        "years": "il",
+        "filters": "Filterlər",
+        "sort_by": "Sırala",
+        "recommended": "Tövsiyə olunan",
+        "location": "Ünvan",
+        "specialty": "İxtisas",
+        "date": "Tarix",
+        "time": "Vaxt",
+        "phone": "Telefon",
+        "email": "E-poçt"
     },
     "Navigation": {
         "doctors": "Həkimlər",
         "hospitals": "Xəstəxanalar",
         "services": "Xidmətlər",
-        "about": "Haqqımızda"
+        "about": "Haqqımızda",
+        "home": "Ana səhifə",
+        "appointments": "Qəbullar",
+        "profile": "Profil",
+        "settings": "Tənzimləmələr",
+        "help": "Kömək"
     },
     "Auth": {
         "welcome_back": "Xoş gəlmisiniz",
         "secure_login": "Təhlükəsiz Giriş",
         "phone_label": "Mobil Nömrə",
         "send_code": "Kodu Göndər",
-        "verify": "Təsdiqlə"
+        "verify": "Təsdiqlə",
+        "enter_code": "Kodu daxil edin",
+        "resend_code": "Kodu yenidən göndər",
+        "create_account": "Hesab yaradın",
+        "signup": "Qeydiyyat",
+        "forgot_password": "Şifrəni unutmusunuz?",
+        "terms_agree": "Şərtlərlə razıyam"
     },
     "Hero": {
         "title": "Sizin Sağlamlığınız,\nBizim Prioritetimiz",
         "subtitle": "Ölkənin ən yaxşı həkimləri və xəstəxanaları bir platformada. Onlayn növbə tutun, vaxtınıza qənaət edin.",
         "cta_primary": "Həkim Tap",
-        "cta_secondary": "Xəstəxanalar"
+        "cta_secondary": "Xəstəxanalar",
+        "trusted_by": "Güvənilir tərəfdaşlar",
+        "patients_served": "Xidmət olunan pasientlər",
+        "active_doctors": "Aktiv həkimlər",
+        "hospitals_network": "Xəstəxana şəbəkəsi"
+    },
+    "Stats": {
+        "patients": "Pasient",
+        "doctors": "Həkim",
+        "hospitals": "Xəstəxana",
+        "appointments": "Qəbul",
+        "satisfaction": "Məmnuniyyət",
+        "rating_desc": "Pasient reytinqi",
+        "quick_booking": "Sürətli rezervasiya",
+        "minutes_avg": "dəqiqə ortalama"
+    },
+    "Features": {
+        "title": "Niyə MedPlus?",
+        "subtitle": "Müasir tibbi xidmətlər bir klik uzaqlığında",
+        "secure_data": {
+            "title": "Təhlükəsiz Məlumat",
+            "desc": "Bütün pasient məlumatları hərbi standartlarda şifrələnmiş formada saxlanılır."
+        },
+        "realtime_booking": {
+            "title": "Real vaxt rezervasiya",
+            "desc": "Həkim təqvimləri ilə sinxronizasiya olunan ani təsdiqləmə sistemi."
+        },
+        "family_management": {
+            "title": "Ailə idarəetməsi",
+            "desc": "Bir hesabdan bütün ailə üzvləri üçün qəbul idarəetməsi."
+        },
+        "notifications": {
+            "title": "Xatırlatmalar",
+            "desc": "SMS və e-poçt vasitəsilə avtomatik xatırlatmalar."
+        },
+        "medical_history": {
+            "title": "Tibbi Tarix",
+            "desc": "Bütün müayinə nəticələri bir yerdə saxlanılır."
+        },
+        "support_247": {
+            "title": "24/7 Dəstək",
+            "desc": "İstənilən vaxt kömək üçün bizimlə əlaqə saxlayın."
+        }
+    },
+    "HowItWorks": {
+        "title": "Necə İşləyir?",
+        "subtitle": "Sadə 3 addımda həkimə qəbul",
+        "step1": {
+            "title": "Həkim Seçin",
+            "desc": "İxtisas, ünvan və reytinqə görə uyğun həkimi tapın."
+        },
+        "step2": {
+            "title": "Vaxt Seçin",
+            "desc": "Sizə uyğun gün və saatı seçin."
+        },
+        "step3": {
+            "title": "Qəbul Alın",
+            "desc": "Təsdiqlənmiş qəbulunuzu alın və gəlin."
+        }
+    },
+    "Doctors": {
+        "title": "Ən Yaxşı Mütəxəssislər",
+        "subtitle": "Yüksək ixtisaslı həkimlərimizlə tanış olun",
+        "view_profile": "Profili Gör",
+        "book_now": "İndi Rezervasiya Et",
+        "instant_booking": "Ani Rezervasiya",
+        "all_specialties": "Bütün İxtisaslar",
+        "cardiology": "Kardiologiya",
+        "neurology": "Nevrologiya",
+        "pediatrics": "Pediatriya",
+        "orthopedics": "Ortopediya",
+        "dermatology": "Dermatologiya",
+        "general_medicine": "Ümumi praktika",
+        "ophthalmology": "Oftalmologiya",
+        "gynecology": "Ginekologiya",
+        "urology": "Urologiya",
+        "endocrinology": "Endokrinologiya",
+        "available_today": "Bu gün mövcuddur",
+        "available_tomorrow": "Sabah mövcuddur",
+        "weekend_available": "Həftə sonları mövcuddur",
+        "senior_consultant": "Baş Məsləhətçi",
+        "consultant": "Məsləhətçi",
+        "specialist": "Mütəxəssis",
+        "no_results": "Mütəxəssis tapılmadı",
+        "refine_search": "Axtarış filtrlərinizi dəyişin",
+        "profile": {
+            "summary": "Peşəkar Xülasə",
+            "services": "Mövcud Klinik Xidmətlər",
+            "experience_label": "Peşəkar Təcrübə",
+            "affiliation": "Müəssisə",
+            "booking_title": "Ani Qeydiyyat",
+            "step1": "1. Səfər Səbəbi",
+            "step2": "2. Üstünlük verilən Tarix",
+            "step3": "3. Qeydiyyat Vaxtı",
+            "select_consultation": "Məsləhət növünü seçin...",
+            "duration": "Dəqiqə",
+            "finalize": "Qəbulu Tamamla",
+            "success_title": "Sorğu Qeydə Alındı",
+            "success_desc": "Tezliklə klinika qeydiyyatçısından təsdiq zəngi alacaqsınız.",
+            "verification_code": "Təsdiq Kodu",
+            "new_visit": "Yeni Qəbul Yaradın",
+            "contact_registry": "Klinika Qeydiyyatı"
+        }
+    },
+    "Hospitals": {
+        "title": "Xəstəxana Şəbəkəsi",
+        "subtitle": "Ölkə üzrə akkreditasiya olunmuş tibb müəssisələri",
+        "search_placeholder": "Xəstəxana və ya ünvan axtarın...",
+        "all_regions": "Bütün Bölgələr",
+        "departments": "Şöbə",
+        "view_details": "Ətraflı və Həkimlər",
+        "contact": "Əlaqə"
+    },
+    "Services": {
+        "title": "Xidmətlərimiz",
+        "subtitle": "Geniş tibbi xidmət çeşidi",
+        "emergency": "Təcili Yardım",
+        "consultation": "Konsultasiya",
+        "lab_tests": "Laboratoriya Testləri",
+        "imaging": "Görüntüləmə",
+        "vaccination": "Vaksinasiya",
+        "checkup": "Ümumi Müayinə",
+        "surgery": "Cərrahiyyə"
+    },
+    "FAQ": {
+        "title": "Tez-tez verilən suallar",
+        "subtitle": "Ən çox soruşulan suallar",
+        "q1": "Qəbula necə yazıla bilərəm?",
+        "a1": "Həkim seçin, uyğun vaxt tapın və onlayn rezervasiya edin. Təsdiq SMS və e-poçt ilə göndərilir.",
+        "q2": "Qəbulu ləğv edə bilərəmmi?",
+        "a2": "Bəli, qəbuldan ən azı 2 saat əvvəl ləğv edə bilərsiniz. Gecikmələrdə zəng edin.",
+        "q3": "Ödəniş necə həyata keçirilir?",
+        "a3": "Qəbul yerində nağd və ya kartla ödəniş edə bilərsiniz. Bəzi klinikalarda onlayn ödəniş mövcuddur.",
+        "q4": "Tibbi sənədlərimə necə daxil ola bilərəm?",
+        "a4": "Hesabınıza daxil olun və 'Tibbi Tarix' bölməsindən bütün sənədlərinizə baxın.",
+        "q5": "Ailə üzvləri üçün rezervasiya edə bilərəmmi?",
+        "a5": "Bəli, hesabınıza ailə üzvləri əlavə edib onlar üçün rezervasiya edə bilərsiniz."
+    },
+    "CTA": {
+        "title": "Milli Tibbi Şəbəkəyə Qoşulun",
+        "subtitle": "Pasient ID alın və sağlamlığınızı idarə edin",
+        "button": "Pasient ID üçün Qeydiyyat"
+    },
+    "Footer": {
+        "description": "Rəsmi Milli Vahid Tibbi Rezervasiya Sistemi. Bütün vətəndaşlar üçün bərabər, effektiv və təhlükəsiz tibbi xidmət.",
+        "services": "Xidmətlər",
+        "find_doctor": "Həkim Tap",
+        "emergency_care": "Təcili Yardım",
+        "lab_results": "Lab Nəticələri",
+        "vaccination": "Vaksinasiya",
+        "insurance": "Sığorta",
+        "institution": "Qurum",
+        "ministry_health": "Səhiyyə Nazirliyi",
+        "medical_board": "Tibbi Şura",
+        "careers": "Karyera",
+        "data_privacy": "Məlumat Məxfiliyi",
+        "report_issue": "Problem Bildir",
+        "contact_center": "Əlaqə Mərkəzi",
+        "address": "Heydər Əliyev prospekti 152,\nBakı, Azərbaycan, AZ1029",
+        "copyright": "© 2026 MedPlus Milli Sistemi. Bütün hüquqlar qorunur.",
+        "privacy_policy": "Məxfilik Siyasəti",
+        "terms": "Xidmət Şərtləri",
+        "accessibility": "Əlçatanlıq"
+    },
+    "Testimonials": {
+        "title": "Pasientlərimiz Nə Deyir",
+        "subtitle": "Real təcrübələr, real nəticələr",
+        "t1": {
+            "text": "MedPlus sayəsində həkimə yazılmaq çox asanlaşdı. Artıq növbələrdə gözləmirəm.",
+            "author": "Aynur M.",
+            "role": "Bakı"
+        },
+        "t2": {
+            "text": "Ailə həkimimizi bir kliklə tapdıq. Çox rahat və sürətli sistem.",
+            "author": "Rauf K.",
+            "role": "Gəncə"
+        },
+        "t3": {
+            "text": "Uşağım üçün pediatr tapmaq heç bu qədər asan olmamışdı. Təşəkkürlər!",
+            "author": "Leyla H.",
+            "role": "Sumqayıt"
+        }
+    },
+    "Banner": {
+        "protocol": "Vahid Sağlamlıq Protokolu:",
+        "message": "Yeni Rəqəmsal Rezidentlik ID-ləri kliniki qeydiyyat üçün məcburidir.",
+        "details": "Ətraflı"
     }
 }

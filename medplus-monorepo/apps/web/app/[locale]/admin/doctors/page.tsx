@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, MoreVertical, MapPin, Star, Edit, Trash2, Eye, CheckCircle, XCircle, X, Loader2 } from 'lucide-react';
+import { Plus, Search, MoreVertical, MapPin, Star, Edit, Trash2, Eye, CheckCircle, XCircle, X, Loader2, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface Doctor {
@@ -156,8 +156,8 @@ export default function DoctorsAdminPage() {
 
                         <div className="flex items-center justify-between p-6 bg-slate-50 border-t border-slate-100">
                             <span className={`px-2 py-1 text-[9px] font-black uppercase tracking-widest rounded-sm ${doctor.status === 'active'
-                                    ? 'bg-emerald-50 text-emerald-600'
-                                    : 'bg-slate-200 text-slate-600'
+                                ? 'bg-emerald-50 text-emerald-600'
+                                : 'bg-slate-200 text-slate-600'
                                 }`}>
                                 {doctor.status}
                             </span>
