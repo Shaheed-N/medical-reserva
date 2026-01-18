@@ -1,6 +1,6 @@
 import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { TopBanner } from '@/components/layout/TopBanner';
+import { Footer } from '@/components/layout/Footer';
 
 export default async function MarketingLayout({
     children,
@@ -12,13 +12,13 @@ export default async function MarketingLayout({
     const { locale } = await params;
 
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <TopBanner />
             <Header locale={locale} />
             <main className="flex-1">
                 {children}
             </main>
-            <Footer />
-        </>
+            <Footer locale={locale} />
+        </div>
     );
 }

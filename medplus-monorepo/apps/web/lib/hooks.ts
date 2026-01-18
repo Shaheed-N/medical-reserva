@@ -31,35 +31,33 @@ export function useDoctors(filters?: {
     return useQuery({
         queryKey: ['doctors', filters],
         queryFn: async () => {
-            let selectStr = `
-                id,
-                title,
-                specialties,
-                bio,
-                years_of_experience,
-                consultation_fee,
-                is_accepting_patients,
-                user:users!inner(id, full_name, avatar_url),
-                branches:doctor_branch_assignments(
-                    branch:branches(id, name, hospital:hospitals(id, name))
-                )
-            `;
-
             let query = supabase
                 .from('doctors')
-                .select(selectStr)
-                .eq('is_accepting_patients', true);
+                .select(`
+                    id,
+                    title,
+                    specialties,
+                    bio,
+                    years_of_experience,
+                    consultation_fee,
+                    is_accepting_patients,
+                    user:users(id, full_name, avatar_url, email, phone),
+                    branches:doctor_branch_assignments(
+                        branch:branches(id, name, hospital:hospitals(id, name))
+                    )
+                `);
 
             if (filters?.hospitalId) {
-                // To filter by hospital, we need to join doctor_branch_assignments and branches
-                const { data: doctorIds } = await supabase
+                const { data: dba } = await supabase
                     .from('doctor_branch_assignments')
                     .select('doctor_id, branch:branches!inner(hospital_id)')
                     .eq('branch.hospital_id', filters.hospitalId);
 
-                if (doctorIds) {
-                    const ids = doctorIds.map(d => d.doctor_id);
+                if (dba && dba.length > 0) {
+                    const ids = dba.map(item => item.doctor_id);
                     query = query.in('id', ids);
+                } else {
+                    return [];
                 }
             }
 
@@ -77,17 +75,24 @@ export function useDoctors(filters?: {
 
             const { data, error } = await query;
 
-            if (error) throw error;
-            return data;
+            if (error) {
+                console.error('Fetch doctors error:', error);
+                throw error;
+            }
+
+            return data || [];
         },
         staleTime: 5 * 60 * 1000,
     });
 }
 
-export function useDoctor(doctorId: string) {
+export function useDoctorProfile() {
     return useQuery({
-        queryKey: ['doctor', doctorId],
+        queryKey: ['doctor-profile'],
         queryFn: async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+
             const { data, error } = await supabase
                 .from('doctors')
                 .select(`
@@ -99,6 +104,7 @@ export function useDoctor(doctorId: string) {
                     ),
                     branches:doctor_branch_assignments(
                         branch:branches(*, hospital:hospitals(*))
+                        branch:branches(*, hospital:hospitals(*))
                     )
                 `)
                 .eq('id', doctorId)
@@ -108,6 +114,123 @@ export function useDoctor(doctorId: string) {
             return data;
         },
         enabled: !!doctorId,
+    });
+}
+
+export function useDoctor(doctorIdOrId: string) {
+    return useQuery({
+        queryKey: ['doctor', doctorIdOrId],
+        queryFn: async () => {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(doctorIdOrId);
+
+            let query = supabase
+                .from('doctors')
+                .select(`
+                    *,
+                    user:users!inner(*),
+                    schedules:doctor_schedules(*),
+                    services:doctor_services(
+                        service:services(*)
+                    ),
+                    branches:doctor_branch_assignments(
+                        branch:branches(*, hospital:hospitals(*))
+                    ),
+                    insurances:doctor_insurance(
+                        company:insurance_companies(*)
+                    ),
+                    reviews:reviews(
+                        id, rating, comment, created_at, patient:users(full_name, avatar_url)
+                    ),
+                    visit_reasons:doctor_visit_reasons(*)
+                `);
+
+            if (isUUID) {
+                query = query.eq('id', doctorIdOrId);
+            } else {
+                query = query.eq('id', doctorIdOrId);
+            }
+
+            const { data, error } = await query.single();
+
+            if (error) {
+                console.error("Error fetching doctor:", error);
+                throw error;
+            }
+            return data;
+        },
+        enabled: !!doctorIdOrId,
+    });
+}
+
+export function useUpdateDoctorProfile() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (updates: any) => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+
+            const { data, error } = await supabase
+                .from('doctors')
+                .update(updates)
+                .eq('user_id', user.id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['doctor-profile'] });
+            toast.success('Profil yeniləndi');
+        },
+        onError: (error) => {
+            console.error('Error updating doctor profile:', error);
+            toast.error('Profil yenilənərkən xəta baş verdi');
+        },
+    });
+}
+
+export function useDoctorAvailability(doctorId: string) {
+    return useQuery({
+        queryKey: ['doctor-availability', doctorId],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('doctor_availability')
+                .select('*')
+                .eq('doctor_id', doctorId);
+
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!doctorId,
+    });
+}
+
+export function useUpdateDoctorAvailability() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ doctorId, schedule }: { doctorId: string; schedule: any[] }) => {
+            const { error } = await supabase
+                .from('doctor_availability')
+                .upsert(
+                    schedule.map((s) => ({
+                        doctor_id: doctorId,
+                        ...s,
+                    })),
+                    { onConflict: 'doctor_id,day_of_week' }
+                );
+
+            if (error) throw error;
+        },
+        onSuccess: (_, { doctorId }) => {
+            queryClient.invalidateQueries({ queryKey: ['doctor-availability', doctorId] });
+            toast.success('Təqvim yeniləndi');
+        },
+        onError: (error) => {
+            console.error('Error updating availability:', error);
+            toast.error('Təqvim yenilənərkən xəta baş verdi');
+        },
     });
 }
 
@@ -163,11 +286,12 @@ export function useHospitals(filters?: {
     });
 }
 
-export function useHospital(hospitalId: string) {
+export function useHospital(hospitalIdOrSlug: string) {
     return useQuery({
-        queryKey: ['hospital', hospitalId],
+        queryKey: ['hospital', hospitalIdOrSlug],
         queryFn: async () => {
-            const { data, error } = await supabase
+            // Try to find by ID first, then by slug
+            let query = supabase
                 .from('hospitals')
                 .select(`
                     *,
@@ -175,14 +299,23 @@ export function useHospital(hospitalId: string) {
                         *,
                         departments(*)
                     )
-                `)
-                .eq('id', hospitalId)
-                .single();
+                `);
+
+            // Check if it's a UUID (ID) or a slug
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hospitalIdOrSlug);
+
+            if (isUUID) {
+                query = query.eq('id', hospitalIdOrSlug);
+            } else {
+                query = query.eq('slug', hospitalIdOrSlug);
+            }
+
+            const { data, error } = await query.single();
 
             if (error) throw error;
             return data;
         },
-        enabled: !!hospitalId,
+        enabled: !!hospitalIdOrSlug,
     });
 }
 
@@ -212,6 +345,29 @@ export function useAppointments(patientId: string) {
             return data;
         },
         enabled: !!patientId,
+    });
+}
+
+export function useDoctorAppointments(doctorId: string) {
+    return useQuery({
+        queryKey: ['doctor-appointments', doctorId],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('appointments')
+                .select(`
+                    *,
+                    patient:users!public_appointments_patient_id_fkey(full_name, avatar_url, phone),
+                    visit_reason:doctor_visit_reasons(name, name_az, name_ru),
+                    branch:branches(*, hospital:hospitals(*))
+                `)
+                .eq('doctor_id', doctorId)
+                .order('scheduled_date', { ascending: false })
+                .order('start_time', { ascending: false });
+
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!doctorId,
     });
 }
 
@@ -368,5 +524,358 @@ export function useAvailableSlots(doctorId: string, branchId: string, date: stri
         },
         enabled: !!doctorId && !!branchId && !!date,
         staleTime: 1 * 60 * 1000, // 1 minute - slots change frequently
+    });
+}
+// ============================================
+// APPLICATIONS HOOKS
+// ============================================
+
+export function useSubmitDoctorApplication() {
+    return useMutation({
+        mutationFn: async (application: any) => {
+            const { data, error } = await supabase
+                .from('doctor_applications')
+                .insert(application);
+
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => {
+            toast.success('Həkim müraciəti uğurla göndərildi!');
+        },
+    });
+}
+
+export function useSubmitHospitalApplication() {
+    return useMutation({
+        mutationFn: async (application: any) => {
+            console.log('[Hook] Inserting hospital application:', application);
+            const { data, error, status, statusText } = await supabase
+                .from('hospital_applications')
+                .insert(application);
+
+            console.log('[Hook] Supabase insert response:', { data, error, status, statusText });
+
+            if (error) {
+                console.error('[Hook] Supabase error:', error.message, error.code, error.details, error.hint);
+                throw error;
+            }
+            return data;
+        },
+        onSuccess: () => {
+            console.log('[Hook] Hospital application submitted successfully!');
+            toast.success('Xəstəxana müraciəti uğurla göndərildi!');
+        },
+        onError: (error: any) => {
+            console.error('[Hook] Mutation error:', error);
+            toast.error(`Xəta: ${error?.message || 'Unknown'}`);
+        },
+    });
+}
+
+// ============================================
+// INSURANCE HOOKS
+// ============================================
+
+export function useInsuranceCompanies() {
+    return useQuery({
+        queryKey: ['insurance-companies'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('insurance_companies')
+                .select('*')
+                .eq('is_active', true);
+
+            if (error) throw error;
+            return data;
+        }
+    });
+}
+
+export function useDoctorInsurance(doctorId: string) {
+    return useQuery({
+        queryKey: ['doctor-insurance', doctorId],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('doctor_insurance')
+                .select(`
+                    *,
+                    insurance:insurance_companies(*)
+                `)
+                .eq('doctor_id', doctorId);
+
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!doctorId,
+    });
+}
+
+export function useToggleDoctorInsurance() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ doctorId, insuranceId, action }: { doctorId: string; insuranceId: string; action: 'add' | 'remove' }) => {
+            if (action === 'add') {
+                const { data, error } = await supabase
+                    .from('doctor_insurance')
+                    .insert({ doctor_id: doctorId, insurance_id: insuranceId });
+                if (error) throw error;
+                return data;
+            } else {
+                const { error } = await supabase
+                    .from('doctor_insurance')
+                    .delete()
+                    .eq('doctor_id', doctorId)
+                    .eq('insurance_id', insuranceId);
+                if (error) throw error;
+                return true;
+            }
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['doctor-insurance', variables.doctorId] });
+        }
+    });
+}
+
+// ============================================
+// VISIT REASONS HOOKS
+// ============================================
+
+export function useDoctorVisitReasons(doctorId: string) {
+    return useQuery({
+        queryKey: ['visit-reasons', doctorId],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('doctor_visit_reasons')
+                .select('*')
+                .eq('doctor_id', doctorId)
+                .order('display_order', { ascending: true });
+
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!doctorId,
+    });
+}
+
+export function useUpsertVisitReason() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (reason: any) => {
+            const { data, error } = await supabase
+                .from('doctor_visit_reasons')
+                .upsert(reason)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['visit-reasons', data.doctor_id] });
+            toast.success('Səbəb yadda saxlanıldı');
+        }
+    });
+}
+
+export function useDeleteVisitReason() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ id, doctorId }: { id: string; doctorId: string }) => {
+            const { error } = await supabase
+                .from('doctor_visit_reasons')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            return id;
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['visit-reasons', variables.doctorId] });
+            toast.success('Səbəb silindi');
+        }
+    });
+}
+
+// ============================================
+// RECEPTION & STATUS HOOKS
+// ============================================
+
+export function useUpdateAppointmentStatus() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ appointmentId, status }: { appointmentId: string; status: string }) => {
+            const { data, error } = await supabase
+                .from('appointments')
+                .update({ status })
+                .eq('id', appointmentId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['appointments'] });
+            toast.success('Status yeniləndi');
+        }
+    });
+}
+
+export function useReceptionistProfile() {
+    return useQuery({
+        queryKey: ['receptionist-profile'],
+        queryFn: async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+
+            const { data, error } = await supabase
+                .from('staff_assignments')
+                .select(`
+                    *,
+                    branch:branches(*, hospital:hospitals(*))
+                `)
+                .eq('user_id', user.id)
+                .is('is_active', true)
+                .single();
+
+            if (error) return null; // Might not be a staff member or multiple branches
+            return data;
+        }
+    });
+}
+
+export function useDailyAppointments(branchId: string, date: string) {
+    return useQuery({
+        queryKey: ['appointments', branchId, date],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('appointments')
+                .select(`
+                    *,
+                    patient:users!public_appointments_patient_id_fkey(full_name, phone),
+                    doctor:doctors(
+                        user:users(full_name)
+                    ),
+                    reason:doctor_visit_reasons(name, name_az, name_ru)
+                `)
+                .eq('branch_id', branchId)
+                .eq('scheduled_date', date)
+                .order('start_time', { ascending: true });
+
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!branchId && !!date,
+    });
+}
+
+export function useHospitalProfile() {
+    return useQuery({
+        queryKey: ['hospital-profile'],
+        queryFn: async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error('Not authenticated');
+
+            // Try to find hospital where user is owner
+            const { data: hospital, error } = await supabase
+                .from('hospitals')
+                .select('*, branches(*)')
+                .eq('owner_id', user.id)
+                .single();
+
+            if (!error && hospital) return hospital;
+
+            // Otherwise check user_roles
+            const { data: roleData, error: roleError } = await supabase
+                .from('user_roles')
+                .select('hospital_id, hospital:hospitals(*, branches(*))')
+                .eq('user_id', user.id)
+                .not('hospital_id', 'is', null)
+                .limit(1)
+                .single();
+
+            if (roleError) return null;
+            return roleData.hospital;
+        }
+    });
+}
+
+export function useHospitalStats(hospitalId: string) {
+    const today = new Date().toISOString().split('T')[0];
+    return useQuery({
+        queryKey: ['hospital-stats', hospitalId, today],
+        queryFn: async () => {
+            // Get all branch IDs for this hospital
+            const { data: branches } = await supabase
+                .from('branches')
+                .select('id')
+                .eq('hospital_id', hospitalId);
+
+            const branchIds = branches?.map(b => b.id) || [];
+
+            if (branchIds.length === 0) return { todayAppointments: 0 };
+
+            const { count, error } = await supabase
+                .from('appointments')
+                .select('*', { count: 'exact', head: true })
+                .in('branch_id', branchIds)
+                .eq('scheduled_date', today);
+
+            if (error) throw error;
+            return { todayAppointments: count || 0 };
+        },
+        enabled: !!hospitalId,
+    });
+}
+
+export function useHospitalDoctors(hospitalId: string) {
+    return useQuery({
+        queryKey: ['hospital-doctors', hospitalId],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('doctor_branch_assignments')
+                .select(`
+                    doctor:doctors(
+                        *,
+                        user:users(full_name, avatar_url, email, phone),
+                        appointments:appointments(count)
+                    ),
+                    branch:branches!inner(hospital_id)
+                `)
+                .eq('branch.hospital_id', hospitalId);
+
+            if (error) throw error;
+
+            const doctorsMap = new Map();
+            data?.forEach((item: any) => {
+                if (item.doctor) {
+                    const doc = {
+                        ...item.doctor,
+                        appointmentCount: item.doctor.appointments?.[0]?.count || 0
+                    };
+                    doctorsMap.set(doc.id, doc);
+                }
+            });
+            return Array.from(doctorsMap.values());
+        },
+        enabled: !!hospitalId,
+    });
+}
+
+export function useHospitalApplications(hospitalId: string) {
+    return useQuery({
+        queryKey: ['hospital-applications', hospitalId],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('doctor_applications')
+                .select('*')
+                .eq('hospital_id', hospitalId)
+                .eq('status', 'pending');
+
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!hospitalId,
     });
 }

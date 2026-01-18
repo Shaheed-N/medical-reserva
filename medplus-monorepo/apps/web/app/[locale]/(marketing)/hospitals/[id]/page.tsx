@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from 'react';
+import { use } from 'react';
 import { useTranslations } from 'next-intl';
 import {
     Building2,
@@ -8,19 +8,18 @@ import {
     Phone,
     Clock,
     Star,
-    ArrowRight,
+    ArrowLeft,
     Shield,
     Stethoscope,
     Users,
     Info,
     Calendar,
-    CheckCircle,
     Share2,
     ChevronRight,
     Search
 } from 'lucide-react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useHospital, useDoctors } from '@/lib/hooks';
 import { HospitalProfileSkeleton, DoctorCardSkeleton } from '@/components/index';
 
@@ -39,59 +38,68 @@ export default function HospitalDetailPage({ params: paramsPromise }: { params: 
     if (isLoading) return <HospitalProfileSkeleton />;
 
     if (error || !hospital) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
-            <div className="text-center p-12 bg-white rounded-sm shadow-xl border border-slate-200 max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-cyan-50/30 to-white">
+            <div className="text-center p-12 bg-white rounded-2xl shadow-xl border border-slate-100 max-w-md">
                 <Building2 size={64} className="mx-auto text-slate-200 mb-6" />
-                <h2 className="text-2xl font-bold text-slate-900 mb-4 uppercase tracking-tight">Müəssisə tapılmadı</h2>
-                <Link href={`/${locale}/hospitals`} className="inline-flex items-center gap-2 text-[#0F766E] font-bold hover:gap-3 transition-all">
-                    <ArrowRight size={18} className="rotate-180" /> {tCommon('back')}
+                <h2 className="text-2xl font-bold text-slate-900 mb-4">{locale === 'az' ? 'Klinika tapılmadı' : 'Клиника не найдена'}</h2>
+                <Link href={`/${locale}/hospitals`} className="inline-flex items-center gap-2 text-cyan-600 font-bold hover:gap-3 transition-all">
+                    <ArrowLeft size={18} /> {tCommon('back')}
                 </Link>
             </div>
         </div>
     );
 
     return (
-        <div className="bg-slate-50 min-h-screen pb-20">
-            {/* Header Banner */}
-            <div className="h-[45vh] md:h-[55vh] relative bg-[#0F172A] overflow-hidden">
+        <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-white via-cyan-50/30 to-white pb-20">
+            {/* Floating Decorative Elements */}
+            <div className="absolute top-20 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-cyan-400 to-teal-400 opacity-20 blur-2xl"></div>
+            <div className="absolute bottom-40 left-[5%] w-48 h-48 rounded-full bg-gradient-to-br from-teal-300 to-emerald-300 opacity-15 blur-3xl"></div>
+            <div className="absolute top-32 left-[15%] w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 shadow-lg shadow-cyan-400/50"></div>
+
+            {/* Hero Banner */}
+            <div className="h-[40vh] md:h-[50vh] relative overflow-hidden">
                 <img
                     src={hospital.cover_image_url || 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1200&q=80'}
                     alt={hospital.name}
-                    className="w-full h-full object-cover opacity-60 scale-105"
+                    className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
 
-                <div className="absolute bottom-0 left-0 w-full p-10 md:p-20">
+                <div className="absolute bottom-0 left-0 w-full p-8 md:p-16">
                     <div className="container mx-auto px-6">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6 }}
                         >
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-[#0F766E] text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-sm">
-                                    {locale === 'az' ? 'Dövlət/Özəl Akkreditə Olunmuş' : 'Государственная/Частная Клиника'}
+                            <Link href={`/${locale}/hospitals`} className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-all text-sm">
+                                <ArrowLeft size={18} /> {locale === 'az' ? 'Klinikalara qayıt' : 'Назад к клиникам'}
+                            </Link>
+
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-teal-500 text-white text-xs font-bold shadow-lg">
+                                    {locale === 'az' ? 'Akkreditə Olunmuş' : 'Аккредитовано'}
                                 </div>
-                                <div className="bg-white/10 backdrop-blur-md text-white/80 text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-sm flex items-center gap-2">
-                                    <Shield size={12} className="text-[#2DD4BF]" /> {tCommon('verified')}
+                                <div className="px-3 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm text-white/90 text-xs font-bold flex items-center gap-1.5">
+                                    <Shield size={12} className="text-cyan-400" /> {tCommon('verified')}
                                 </div>
                             </div>
 
-                            <h1 className="text-4xl md:text-7xl font-bold text-white mb-8 leading-tight tracking-tight max-w-4xl">
+                            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight max-w-3xl">
                                 {hospital.name}
                             </h1>
 
-                            <div className="flex flex-wrap gap-8 text-white/90 text-sm font-bold tracking-wide uppercase">
+                            <div className="flex flex-wrap gap-6 text-white/90 text-sm">
                                 <span className="flex items-center gap-2">
-                                    <MapPin size={20} className="text-[#2DD4BF]" />
+                                    <MapPin size={18} className="text-cyan-400" />
                                     {hospital.branches?.[0]?.address_line1}, {hospital.branches?.[0]?.city}
                                 </span>
                                 <span className="flex items-center gap-2">
-                                    <Star size={20} className="text-[#2DD4BF] fill-[#2DD4BF]" />
-                                    4.9 (1,240 {locale === 'az' ? 'Rəy' : 'Отзыва'})
+                                    <Star size={18} className="text-yellow-400 fill-yellow-400" />
+                                    4.9 (1,240 {locale === 'az' ? 'rəy' : 'отзывов'})
                                 </span>
                                 <span className="flex items-center gap-2">
-                                    <Phone size={20} className="text-[#2DD4BF]" />
+                                    <Phone size={18} className="text-cyan-400" />
                                     {hospital.contact_phone || '+994 12 440 00 00'}
                                 </span>
                             </div>
@@ -100,40 +108,42 @@ export default function HospitalDetailPage({ params: paramsPromise }: { params: 
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 -mt-10 relative z-20">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 md:gap-16">
+            <div className="container mx-auto px-6 -mt-6 relative z-20">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                     {/* Left: Info */}
-                    <div className="lg:col-span-2 space-y-12 md:space-y-16">
-                        {/* Summary Section */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {/* About Section */}
                         <motion.section
-                            className="bg-white p-8 md:p-12 rounded-sm border border-slate-200 shadow-xl"
+                            className="bg-white p-8 rounded-2xl border border-slate-100 shadow-xl"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                         >
-                            <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-4">
-                                <Info size={24} className="text-[#0F766E]" />
-                                {locale === 'az' ? 'Müəssisə Haqqında' : 'Об учреждении'}
+                            <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <Info size={20} className="text-cyan-600" />
+                                {locale === 'az' ? 'Klinika Haqqında' : 'О клинике'}
                             </h2>
-                            <p className="text-slate-500 text-lg leading-relaxed mb-12 font-light">
+                            <p className="text-slate-500 leading-relaxed mb-8">
                                 {hospital.description || (locale === 'az'
-                                    ? "Bu tibb müəssisəsi yüksək keyfiyyətli səhiyyə xidmətləri göstərmək üçün ən müasir texnologiyalar və peşəkar kadrlarla təchiz edilmişdir. Biz pasientlərimizin sağlamlığını və rahatlığını hər şeydən üstün tuturuq."
-                                    : "Данное медицинское учреждение оснащено самыми современными технологиями и профессиональными кадрами для оказания высококачественных медицинских услуг. Мы ставим здоровье и комфорт наших пациентов превыше всего.")}
+                                    ? "Bu tibb müəssisəsi yüksək keyfiyyətli səhiyyə xidmətləri göstərmək üçün ən müasir texnologiyalar və peşəkar kadrlarla təchiz edilmişdir."
+                                    : "Данное медицинское учреждение оснащено самыми современными технологиями для оказания высококачественных медицинских услуг.")}
                             </p>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {[
-                                    { label: locale === 'az' ? 'Təcili Yardım' : 'Скорая Помощь', desc: '24/7 Aktiv', icon: Clock },
-                                    { label: locale === 'az' ? 'Diaqnostika' : 'Диагностика', desc: 'MRT, KT, Rentgen', icon: Stethoscope },
-                                    { label: locale === 'az' ? 'Laboratoriya' : 'Лаборатория', desc: 'Sürətli Analiz', icon: Users },
-                                    { label: locale === 'az' ? 'Aptek' : 'Аптека', desc: 'Klinik daxilində', icon: Shield },
-                                    { label: locale === 'az' ? 'Dayanacaq' : 'Парковка', desc: 'Ödənişsiz', icon: MapPin },
-                                    { label: locale === 'az' ? 'Qidalanma' : 'Питание', desc: 'Kafeteriya', icon: Info },
+                                    { label: locale === 'az' ? 'Təcili Yardım' : 'Скорая Помощь', desc: '24/7', icon: Clock, color: 'from-red-500 to-rose-600' },
+                                    { label: locale === 'az' ? 'Diaqnostika' : 'Диагностика', desc: 'MRT, CT', icon: Stethoscope, color: 'from-violet-500 to-purple-600' },
+                                    { label: locale === 'az' ? 'Laboratoriya' : 'Лаборатория', desc: locale === 'az' ? 'Sürətli' : 'Быстро', icon: Users, color: 'from-emerald-500 to-teal-600' },
+                                    { label: locale === 'az' ? 'Aptek' : 'Аптека', desc: locale === 'az' ? 'Daxili' : 'Внутр.', icon: Shield, color: 'from-cyan-500 to-blue-600' },
+                                    { label: locale === 'az' ? 'Dayanacaq' : 'Парковка', desc: locale === 'az' ? 'Pulsuz' : 'Бесплатно', icon: MapPin, color: 'from-orange-500 to-amber-600' },
+                                    { label: locale === 'az' ? 'Qidalanma' : 'Питание', desc: locale === 'az' ? 'Kafeteriya' : 'Кафетерий', icon: Info, color: 'from-pink-500 to-rose-600' },
                                 ].map((feature, i) => (
-                                    <div key={i} className="flex flex-col gap-2 p-4 rounded-sm hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                        <feature.icon size={24} className="text-[#0F766E] mb-2" />
-                                        <div className="text-sm font-bold text-slate-900 uppercase tracking-widest">{feature.label}</div>
-                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{feature.desc}</div>
+                                    <div key={i} className="group p-4 bg-slate-50 hover:bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-lg transition-all cursor-pointer">
+                                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-3 shadow-lg`}>
+                                            <feature.icon size={18} className="text-white" />
+                                        </div>
+                                        <div className="text-sm font-bold text-slate-900 group-hover:text-cyan-700 transition-colors">{feature.label}</div>
+                                        <div className="text-xs text-slate-400">{feature.desc}</div>
                                     </div>
                                 ))}
                             </div>
@@ -141,24 +151,24 @@ export default function HospitalDetailPage({ params: paramsPromise }: { params: 
 
                         {/* Specialists Section */}
                         <section>
-                            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
                                 <div>
-                                    <h2 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">
-                                        {locale === 'az' ? 'Bu müəssisənin mütəxəssisləri' : 'Специалисты этого учреждения'}
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                                        {locale === 'az' ? 'Mütəxəssislər' : 'Специалисты'}
                                     </h2>
-                                    <p className="text-slate-500 font-medium">{locale === 'az' ? 'Qəbul üçün həkiminizi seçin' : 'Выберите врача для записи'}</p>
+                                    <p className="text-slate-500">{locale === 'az' ? 'Qəbul üçün həkim seçin' : 'Выберите врача для записи'}</p>
                                 </div>
                                 <div className="relative w-full md:w-64">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                     <input
                                         type="text"
-                                        placeholder={locale === 'az' ? 'Həkim axtar...' : 'Искать врача...'}
-                                        className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-sm text-sm focus:ring-2 focus:ring-[#0F766E]/20 outline-none"
+                                        placeholder={locale === 'az' ? 'Həkim axtar...' : 'Поиск врача...'}
+                                        className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 outline-none transition-all"
                                     />
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 {isLoadingDoctors ? (
                                     Array.from({ length: 4 }).map((_, i) => (
                                         <DoctorCardSkeleton key={i} />
@@ -171,39 +181,46 @@ export default function HospitalDetailPage({ params: paramsPromise }: { params: 
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="bg-white p-6 rounded-sm border border-slate-200 flex items-center gap-6 hover:shadow-xl transition-all group shadow-sm"
                                         >
-                                            <div className="w-24 h-24 rounded-sm overflow-hidden bg-slate-50 shrink-0 grayscale group-hover:grayscale-0 transition-all duration-500">
-                                                <img
-                                                    src={doc.user?.avatar_url || 'https://images.unsplash.com/photo-1612349317150-b4639e53b8d1?auto=format&fit=crop&w=300&q=80'}
-                                                    alt={doc.user?.full_name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-slate-900 group-hover:text-[#0F766E] transition-colors truncate">
-                                                    {doc.title} {doc.user?.full_name}
-                                                </h3>
-                                                <div className="flex flex-wrap gap-1 mb-3">
-                                                    {doc.specialties?.slice(0, 2).map((s: string, j: number) => (
-                                                        <span key={j} className="text-[#0F766E] text-[8px] font-black uppercase tracking-widest">
-                                                            {s}
-                                                        </span>
-                                                    ))}
+                                            <Link
+                                                href={`/${locale}/doctors/${doc.id}`}
+                                                className="group block bg-white p-5 rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 shrink-0 group-hover:scale-105 transition-transform">
+                                                        <img
+                                                            src={doc.user?.avatar_url || 'https://images.unsplash.com/photo-1612349317150-b4639e53b8d1?auto=format&fit=crop&w=300&q=80'}
+                                                            alt={doc.user?.full_name}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="font-bold text-slate-900 group-hover:text-cyan-600 transition-colors truncate">
+                                                            {doc.title} {doc.user?.full_name}
+                                                        </h3>
+                                                        <div className="flex flex-wrap gap-1.5 mb-2">
+                                                            {doc.specialties?.slice(0, 2).map((s: string, j: number) => (
+                                                                <span key={j} className="text-cyan-700 text-xs font-semibold bg-cyan-50 px-2 py-0.5 rounded-full">
+                                                                    {s}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        <div className="flex items-center gap-1 text-sm">
+                                                            <Star size={14} className="fill-yellow-400 text-yellow-400" />
+                                                            <span className="font-semibold text-slate-700">4.9</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-gradient-to-r group-hover:from-cyan-500 group-hover:to-teal-500 flex items-center justify-center transition-all shrink-0">
+                                                        <ChevronRight size={18} className="text-slate-400 group-hover:text-white transition-colors" />
+                                                    </div>
                                                 </div>
-                                                <Link
-                                                    href={`/${locale}/doctors/${doc.id}`}
-                                                    className="inline-flex items-center gap-2 px-6 py-2 bg-[#0F172A] text-white text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#0F766E] transition-all"
-                                                >
-                                                    {tDoctors('book_now')} <ChevronRight size={12} />
-                                                </Link>
-                                            </div>
+                                            </Link>
                                         </motion.div>
                                     ))
                                 ) : (
-                                    <div className="col-span-2 py-12 text-center bg-white rounded-sm border border-slate-100">
+                                    <div className="col-span-2 py-12 text-center bg-white rounded-2xl border border-slate-100 shadow-lg">
                                         <Users size={48} className="mx-auto text-slate-200 mb-4" />
-                                        <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Həkim tapılmadı</p>
+                                        <p className="text-slate-400 font-medium">{locale === 'az' ? 'Həkim tapılmadı' : 'Врачей не найдено'}</p>
                                     </div>
                                 )}
                             </div>
@@ -211,60 +228,66 @@ export default function HospitalDetailPage({ params: paramsPromise }: { params: 
                     </div>
 
                     {/* Right: Actions */}
-                    <aside className="space-y-8">
+                    <aside className="space-y-6">
                         <motion.div
-                            className="bg-[#0F172A] p-10 rounded-sm shadow-2xl text-white sticky top-24 overflow-hidden"
+                            className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 rounded-2xl shadow-2xl text-white sticky top-24 overflow-hidden"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.4 }}
                         >
-                            <div className="absolute top-0 left-0 w-full h-1 bg-[#2DD4BF]"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-teal-500/10 rounded-full blur-2xl"></div>
 
-                            <h3 className="text-xl font-bold mb-8 uppercase tracking-tight">Klinik Qeydiyyat</h3>
-                            <div className="space-y-4">
-                                <button className="w-full py-5 bg-[#0F766E] hover:bg-[#134E4A] transition-all rounded-sm font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 shadow-lg shadow-[#0F766E]/20 active:scale-95 group">
-                                    <Calendar size={18} className="group-hover:scale-110 transition-transform" /> {locale === 'az' ? 'Ümumi Müayinə Al' : 'Общее Обследование'}
-                                </button>
-                                <button className="w-full py-5 bg-white/5 hover:bg-white/10 border border-white/10 transition-all rounded-sm font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 active:scale-95">
-                                    <Phone size={18} /> {tCommon('phone')}
-                                </button>
-                                <button className="w-full py-5 bg-white/5 hover:bg-white/10 border border-white/10 transition-all rounded-sm font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 active:scale-95">
-                                    <Share2 size={18} /> {locale === 'az' ? 'Ünvanı Paylaş' : 'Поделиться'}
-                                </button>
-                            </div>
-
-                            <div className="mt-12 pt-10 border-t border-white/5">
-                                <div className="flex items-center gap-5 mb-6">
-                                    <div className="w-12 h-12 rounded-sm bg-[#0F766E] flex items-center justify-center shrink-0">
-                                        <Clock size={24} className="text-[#2DD4BF]" />
-                                    </div>
-                                    <div>
-                                        <div className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-1">
-                                            {locale === 'az' ? 'İş Saatları' : 'Часы Работы'}
-                                        </div>
-                                        <div className="text-sm font-bold">24/7 {locale === 'az' ? 'Təcili Yardım' : 'Экстренная Помощь'}</div>
-                                    </div>
+                            <div className="relative z-10">
+                                <h3 className="text-lg font-bold mb-6">{locale === 'az' ? 'Qeydiyyat' : 'Запись'}</h3>
+                                <div className="space-y-3">
+                                    <button className="w-full py-4 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 transition-all rounded-xl font-bold text-sm flex items-center justify-center gap-3 shadow-lg shadow-cyan-500/30 active:scale-95">
+                                        <Calendar size={18} /> {locale === 'az' ? 'Qəbulə Yazıl' : 'Записаться'}
+                                    </button>
+                                    <button className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 transition-all rounded-xl font-semibold text-sm flex items-center justify-center gap-3 active:scale-95">
+                                        <Phone size={18} /> {locale === 'az' ? 'Zəng Et' : 'Позвонить'}
+                                    </button>
+                                    <button className="w-full py-4 bg-white/10 hover:bg-white/20 border border-white/10 transition-all rounded-xl font-semibold text-sm flex items-center justify-center gap-3 active:scale-95">
+                                        <Share2 size={18} /> {locale === 'az' ? 'Paylaş' : 'Поделиться'}
+                                    </button>
                                 </div>
-                                <div className="text-[10px] text-white/30 font-bold uppercase tracking-widest leading-relaxed">
-                                    {locale === 'az'
-                                        ? 'Standart qeydiyyat saatları: Bazar ertəsi - Cümə 08:00 - 18:00'
-                                        : 'Стандартные часы регистрации: Пн-Пт 08:00 - 18:00'}
+
+                                <div className="mt-8 pt-6 border-t border-white/10">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center">
+                                            <Clock size={22} className="text-white" />
+                                        </div>
+                                        <div>
+                                            <div className="text-xs text-white/50 font-medium mb-0.5">
+                                                {locale === 'az' ? 'İş Saatları' : 'Часы работы'}
+                                            </div>
+                                            <div className="text-sm font-bold">24/7 {locale === 'az' ? 'Təcili Yardım' : 'Скорая'}</div>
+                                        </div>
+                                    </div>
+                                    <div className="text-xs text-white/40 leading-relaxed">
+                                        {locale === 'az'
+                                            ? 'Standart qeydiyyat: B.e - Cümə 08:00 - 18:00'
+                                            : 'Регистрация: Пн-Пт 08:00 - 18:00'}
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
 
+                        {/* Insurance Card */}
                         <motion.div
-                            className="p-8 border border-dashed border-slate-200 rounded-sm text-center"
+                            className="p-6 bg-white border border-slate-100 rounded-2xl text-center shadow-lg"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
                         >
-                            <Stethoscope className="mx-auto mb-4 text-slate-300" size={32} />
-                            <h4 className="font-bold text-slate-900 mb-2">{locale === 'az' ? 'Tibbi Sığorta' : 'Мед. Страхование'}</h4>
-                            <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 flex items-center justify-center mx-auto mb-4">
+                                <Stethoscope size={22} className="text-white" />
+                            </div>
+                            <h4 className="font-bold text-slate-900 mb-2">{locale === 'az' ? 'Sığorta Qəbulu' : 'Страхование'}</h4>
+                            <p className="text-sm text-slate-500 leading-relaxed">
                                 {locale === 'az'
-                                    ? 'Bu müəssisə bütün əsas beynəlxalq və yerli tibbi sığorta kartlarını qəbul edir.'
-                                    : 'Это учреждение принимает все основные международные и местные страховые карты.'}
+                                    ? 'Bütün əsas sığorta kartlarını qəbul edirik.'
+                                    : 'Принимаем все основные страховые карты.'}
                             </p>
                         </motion.div>
                     </aside>

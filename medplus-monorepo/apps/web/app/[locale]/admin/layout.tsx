@@ -19,6 +19,7 @@ import {
 
 const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Applications', href: '/admin/applications', icon: Bell },
     { name: 'Hospitals', href: '/admin/hospitals', icon: Building2 },
     { name: 'Doctors', href: '/admin/doctors', icon: UserCog },
     { name: 'Patients', href: '/admin/patients', icon: Users },

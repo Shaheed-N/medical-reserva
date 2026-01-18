@@ -248,8 +248,8 @@
         }
     },
     "Banner": {
-        "protocol": "Vahid Sağlamlıq Protokolu:",
-        "message": "Yeni Rəqəmsal Rezidentlik ID-ləri kliniki qeydiyyat üçün məcburidir.",
-        "details": "Ətraflı"
+        "protocol": "Həkim Qəbulu:",
+        "message": "Ən yaxşı mütəxəssislərə onlayn qəbul üçün həkim siyahısına keçid edin.",
+        "details": "Həkimlər"
     }
 }

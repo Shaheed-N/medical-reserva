@@ -22,7 +22,10 @@ export function Header({ locale }: { locale: string }) {
         technology: isRu ? 'Клиники' : 'Klinikalar',
         specialists: isRu ? 'Врачи' : 'Həkimlər',
         locations: isRu ? 'Контакты' : 'Əlaqə',
-        portal: isRu ? 'Личный Кабинет' : 'Şəxsi Kabinet'
+        about: isRu ? 'О нас' : 'Haqqımızda',
+        portal: isRu ? 'Личный Кабинет' : 'Şəxsi Kabinet',
+        login: isRu ? 'Войти' : 'Daxil ol',
+        signup: isRu ? 'Qeydiyyat' : 'Qeydiyyat'
     };
 
     return (
@@ -49,20 +52,19 @@ export function Header({ locale }: { locale: string }) {
                     </Link>
 
                     {/* Navigation - Desktop */}
-                    <div className="hidden lg:flex items-center gap-1">
+                    <div className="hidden lg:flex items-center gap-2">
                         {[
+                            { name: isRu ? 'Бизнес регистрация' : 'Biznes Qeydiyyatı', href: `/${locale}/business/register` },
                             { name: nav.research, href: `/${locale}/services` },
                             { name: nav.technology, href: `/${locale}/hospitals` },
                             { name: nav.specialists, href: `/${locale}/doctors` },
-                            { name: nav.locations, href: `/${locale}/contact` },
                         ].map((item) => (
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className="px-5 py-2.5 text-[13px] font-bold text-slate-600 hover:text-slate-900 transition-all rounded-full hover:bg-slate-50 relative group"
+                                className="px-4 py-2.5 text-[12px] font-black text-slate-500 hover:text-slate-900 transition-all rounded-full hover:bg-slate-100/80 relative group uppercase tracking-[0.15em] whitespace-nowrap"
                             >
-                                <span className="relative z-10 uppercase tracking-widest">{item.name}</span>
-                                <span className="absolute bottom-1.5 left-5 right-5 h-[1.5px] bg-cyan-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+                                {item.name}
                             </Link>
                         ))}
                     </div>
@@ -75,13 +77,19 @@ export function Header({ locale }: { locale: string }) {
                             <Link href="/ru" className={`px-3 py-1.5 rounded-full text-[11px] font-black transition-all ${isRu ? 'bg-white shadow-sm text-cyan-600' : 'text-slate-400 hover:text-slate-600'}`}>RU</Link>
                         </div>
 
-                        <Link href={`/${locale}/login`} className="relative group">
-                            <button className="hidden sm:flex items-center gap-3 h-12 px-8 rounded-full bg-slate-900 text-white text-xs font-black hover:bg-slate-800 transition-all shadow-[0_10px_20px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 overflow-hidden group">
-                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-cyan-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                                <span className="uppercase tracking-[0.1em]">{nav.portal}</span>
-                                <span className="material-symbols-outlined text-[18px] text-cyan-400 transition-transform group-hover:translate-x-1">trending_flat</span>
-                            </button>
-                        </Link>
+                        <div className="hidden sm:flex items-center gap-4">
+                            <Link href={`/${locale}/login`} className="text-[12px] font-black text-slate-900 uppercase tracking-widest hover:text-cyan-600 transition-colors">
+                                {nav.login}
+                            </Link>
+
+                            <Link href={`/${locale}/signup`} className="relative group">
+                                <button className="flex items-center gap-3 h-12 px-8 rounded-full bg-slate-900 text-white text-xs font-black hover:bg-slate-800 transition-all shadow-[0_10px_20px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 overflow-hidden group">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-cyan-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                                    <span className="uppercase tracking-[0.1em]">{nav.signup}</span>
+                                    <span className="material-symbols-outlined text-[18px] text-cyan-400 transition-transform group-hover:translate-x-1">trending_flat</span>
+                                </button>
+                            </Link>
+                        </div>
 
                         <button
                             className="lg:hidden p-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 hover:bg-slate-100 transition-all shadow-sm"
@@ -104,10 +112,10 @@ export function Header({ locale }: { locale: string }) {
                     >
                         <div className="px-6 py-8 space-y-6">
                             {[
+                                { name: isRu ? 'Бизнес регистрация' : 'Biznes Qeydiyyatı', href: `/${locale}/business/register` },
                                 { name: nav.research, href: `/${locale}/services` },
                                 { name: nav.technology, href: `/${locale}/hospitals` },
                                 { name: nav.specialists, href: `/${locale}/doctors` },
-                                { name: nav.locations, href: `/${locale}/contact` },
                             ].map((item) => (
                                 <Link key={item.name} href={item.href} className="block text-sm font-black text-slate-900 hover:text-cyan-500 uppercase tracking-widest transition-colors">
                                     {item.name}
@@ -118,12 +126,19 @@ export function Header({ locale }: { locale: string }) {
                                     <Link href="/az" className={`px-4 py-2 rounded-xl text-xs font-black border transition-all ${!isRu ? 'bg-cyan-50 border-cyan-100 text-cyan-600' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>AZ</Link>
                                     <Link href="/ru" className={`px-4 py-2 rounded-xl text-xs font-black border transition-all ${isRu ? 'bg-cyan-50 border-cyan-100 text-cyan-600' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>RU</Link>
                                 </div>
-                                <Link href={`/${locale}/login`}>
-                                    <button className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl bg-slate-900 text-white text-xs font-black uppercase tracking-widest">
-                                        {nav.portal}
-                                        <span className="material-symbols-outlined text-[20px] text-cyan-400">trending_flat</span>
-                                    </button>
-                                </Link>
+                                <div className="flex flex-col gap-3">
+                                    <Link href={`/${locale}/login`}>
+                                        <button className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl bg-white border border-slate-200 text-slate-900 text-xs font-black uppercase tracking-widest">
+                                            {nav.login}
+                                        </button>
+                                    </Link>
+                                    <Link href={`/${locale}/signup`}>
+                                        <button className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl bg-slate-900 text-white text-xs font-black uppercase tracking-widest">
+                                            {nav.signup}
+                                            <span className="material-symbols-outlined text-[20px] text-cyan-400">trending_flat</span>
+                                        </button>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     </motion.div>

@@ -47,7 +47,7 @@ export default async function LocaleLayout({
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 {/* Material Symbols for the icons used in the design */}
-                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..0" />
             </head>
             <body className={`${ibmPlexSans.className} antialiased min-h-screen flex flex-col bg-white text-slate-900 font-sans`}>
                 <QueryProvider>

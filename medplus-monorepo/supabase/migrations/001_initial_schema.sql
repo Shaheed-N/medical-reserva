@@ -40,18 +40,6 @@ INSERT INTO public.roles (name, display_name, description) VALUES
     ('patient', 'Patient', 'Book and manage own appointments')
 ON CONFLICT (name) DO NOTHING;
 
--- User role assignments
-CREATE TABLE IF NOT EXISTS public.user_roles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-    role_id UUID NOT NULL REFERENCES public.roles(id) ON DELETE CASCADE,
-    hospital_id UUID REFERENCES public.hospitals(id) ON DELETE CASCADE,
-    branch_id UUID REFERENCES public.branches(id) ON DELETE CASCADE,
-    granted_at TIMESTAMPTZ DEFAULT now(),
-    granted_by UUID REFERENCES public.users(id),
-    UNIQUE(user_id, role_id, hospital_id, branch_id)
-);
-
 -- ============================================
 -- HOSPITALS & BRANCHES
 -- ============================================
@@ -98,6 +86,19 @@ CREATE TABLE IF NOT EXISTS public.branches (
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE(hospital_id, slug)
+);
+
+
+-- User role assignments
+CREATE TABLE IF NOT EXISTS public.user_roles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+    role_id UUID NOT NULL REFERENCES public.roles(id) ON DELETE CASCADE,
+    hospital_id UUID REFERENCES public.hospitals(id) ON DELETE CASCADE,
+    branch_id UUID REFERENCES public.branches(id) ON DELETE CASCADE,
+    granted_at TIMESTAMPTZ DEFAULT now(),
+    granted_by UUID REFERENCES public.users(id),
+    UNIQUE(user_id, role_id, hospital_id, branch_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.staff_assignments (
@@ -385,21 +386,27 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_users_updated_at ON public.users;
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON public.users
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_hospitals_updated_at ON public.hospitals;
 CREATE TRIGGER update_hospitals_updated_at BEFORE UPDATE ON public.hospitals
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_branches_updated_at ON public.branches;
 CREATE TRIGGER update_branches_updated_at BEFORE UPDATE ON public.branches
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_doctors_updated_at ON public.doctors;
 CREATE TRIGGER update_doctors_updated_at BEFORE UPDATE ON public.doctors
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_appointments_updated_at ON public.appointments;
 CREATE TRIGGER update_appointments_updated_at BEFORE UPDATE ON public.appointments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_patient_profiles_updated_at ON public.patient_profiles;
 CREATE TRIGGER update_patient_profiles_updated_at BEFORE UPDATE ON public.patient_profiles
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
