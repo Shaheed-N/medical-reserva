@@ -18,6 +18,7 @@ interface Application {
     name?: string; // hospital
     admin_email?: string; // hospital
     admin_phone?: string; // hospital
+    address?: string; // hospital
     type: string;
     status: 'pending' | 'approved' | 'rejected';
     created_at: string;

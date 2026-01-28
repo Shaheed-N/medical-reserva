@@ -39,13 +39,13 @@ function DoctorsList({ searchQuery, selectedSpecialty, hospitalFilter, locale }:
     }
 
     const filteredDoctors = (doctors || []).filter(doc => {
-        const fullName = doc.user?.full_name || '';
+        const user = Array.isArray(doc.user) ? doc.user[0] : doc.user;
+        const fullName = user?.full_name || '';
         const matchesSearch = fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
             doc.specialties?.some((s: string) => s.toLowerCase().includes(searchQuery.toLowerCase()));
         const matchesSpecialty = selectedSpecialty === 'all' ||
             doc.specialties?.some((s: string) => s.toLowerCase().includes(selectedSpecialty.toLowerCase()));
-        const matchesHospital = !hospitalFilter || doc.hospital_id === hospitalFilter;
-        return matchesSearch && matchesSpecialty && matchesHospital && doc.is_active;
+        return matchesSearch && matchesSpecialty && doc.is_accepting_patients;
     });
 
     return (

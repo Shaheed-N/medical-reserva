@@ -104,16 +104,14 @@ export function useDoctorProfile() {
                     ),
                     branches:doctor_branch_assignments(
                         branch:branches(*, hospital:hospitals(*))
-                        branch:branches(*, hospital:hospitals(*))
                     )
                 `)
-                .eq('id', doctorId)
+                .eq('user_id', user.id)
                 .single();
 
             if (error) throw error;
             return data;
         },
-        enabled: !!doctorId,
     });
 }
 
