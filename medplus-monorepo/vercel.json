@@ -1,8 +1,15 @@
 {
-    "$schema": "https://openapi.vercel.sh/vercel.json",
-    "buildCommand": "cd ../.. && npx turbo run build --filter=@medplus/web",
-    "outputDirectory": ".next",
-    "installCommand": "npm install",
-    "framework": "nextjs",
-    "rootDirectory": "apps/web"
+    "version": 2,
+    "builds": [
+        {
+            "src": "apps/web/package.json",
+            "use": "@vercel/next"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "apps/web/$1"
+        }
+    ]
 }
