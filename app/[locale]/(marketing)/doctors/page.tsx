@@ -3,6 +3,7 @@
 import { useState, useTransition, Suspense } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useDoctors } from '@/lib/hooks';
 
@@ -81,10 +82,12 @@ function DoctorsList({ searchQuery, selectedSpecialty, hospitalFilter, locale }:
                         >
                             {/* Profile Photo */}
                             <div className="w-32 h-32 md:w-40 md:h-44 shrink-0 rounded-2xl overflow-hidden relative shadow-lg">
-                                <img
-                                    src={doc.profile_image_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=300&q=80'}
+                                <Image
+                                    src={doc.profile_image_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80'}
                                     alt={fullName}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-all duration-700"
+                                    sizes="(max-width: 768px) 128px, 160px"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
                                 <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 shadow-md">

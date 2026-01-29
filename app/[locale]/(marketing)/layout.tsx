@@ -13,7 +13,7 @@ export default async function MarketingLayout({
 
     return (
         <div className="flex flex-col min-h-screen">
-            <TopBanner />
+            <TopBanner locale={locale} />
             <Header locale={locale} />
             <main className="flex-1">
                 {children}
