@@ -1,5 +1,5 @@
 {
-    "buildCommand": "npx turbo run build --filter=@medplus/web",
+    "buildCommand": "npm run build --workspace=@medplus/web",
     "outputDirectory": "apps/web/.next",
     "installCommand": "npm install"
 }
