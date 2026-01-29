@@ -1,19 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Validate environment variables
-if (!supabaseUrl || !supabaseAnonKey) {
+// Validate environment variables for runtime
+if (!rawUrl || !rawKey) {
     if (typeof window !== 'undefined') {
         console.error('CRITICAL: Supabase credentials missing. Please check your .env.local file.');
     }
 }
 
+// Safe client creation for build time
+const supabaseUrl = rawUrl || 'https://placeholder.supabase.co';
+const supabaseAnonKey = rawKey || 'placeholder-key';
+
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(
-    supabaseUrl || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder-key',
+    supabaseUrl,
+    supabaseAnonKey,
     {
         auth: {
             autoRefreshToken: true,
