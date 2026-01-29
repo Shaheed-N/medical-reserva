@@ -1,15 +1,6 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "apps/web/package.json",
-            "use": "@vercel/next"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "apps/web/$1"
-        }
-    ]
+    "buildCommand": "npx turbo run build --filter=@medplus/web",
+    "outputDirectory": "apps/web/.next",
+    "installCommand": "npm install",
+    "framework": "nextjs"
 }
