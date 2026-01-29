@@ -15,6 +15,7 @@
         "mobile": "npm run dev --workspace=@medplus/mobile"
     },
     "devDependencies": {
+        "next": "16.1.1",
         "turbo": "^1.11.2",
         "typescript": "^5.3.3"
     },
