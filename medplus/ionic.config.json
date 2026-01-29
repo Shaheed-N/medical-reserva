@@ -1,7 +1,0 @@
-{
-  "name": "medplus",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react-vite"
-}
