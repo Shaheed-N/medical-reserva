@@ -94,6 +94,13 @@ export default function ProviderLayout() {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="subscription"
+                options={{
+                    href: null,
+                    headerShown: false,
+                }}
+            />
         </Tabs>
     );
 }

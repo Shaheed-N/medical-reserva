@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     ViewStyle,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
 import { useTheme, Theme } from '../../theme';
 import { useTranslation } from 'react-i18next';
@@ -132,10 +133,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                         <Text style={styles.specialty}>{doctorSpecialty}</Text>
                     )}
                     {serviceName && (
-                        <Text style={styles.service}>🏥 {serviceName}</Text>
+                        <View style={styles.infoRow}>
+                            <Ionicons name="medkit-outline" size={14} color={theme.colors.textSecondary} style={{ marginRight: 6 }} />
+                            <Text style={styles.service}>{serviceName}</Text>
+                        </View>
                     )}
                     {hospitalName && (
-                        <Text style={styles.hospital}>📍 {hospitalName}</Text>
+                        <View style={styles.infoRow}>
+                            <Ionicons name="location-outline" size={14} color={theme.colors.textTertiary} style={{ marginRight: 6 }} />
+                            <Text style={styles.hospital}>{hospitalName}</Text>
+                        </View>
                     )}
                 </View>
             </View>
@@ -234,7 +241,12 @@ const createStyles = (theme: Theme) =>
         specialty: {
             fontSize: 14,
             color: theme.colors.textSecondary,
-            marginBottom: 4,
+            marginBottom: 8,
+        },
+        infoRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: 2,
         },
         service: {
             fontSize: 13,

@@ -197,6 +197,30 @@ export default function DashboardScreen() {
                     />
                 </View>
 
+                {/* Premium Banner */}
+                <TouchableOpacity
+                    style={styles.premiumBanner}
+                    onPress={() => router.push('/(provider)/subscription')}
+                >
+                    <LinearGradient
+                        colors={['#002060', '#0055FF']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.premiumGradient}
+                    >
+                        <View style={styles.premiumContent}>
+                            <View style={styles.premiumIconContainer}>
+                                <Text style={styles.premiumIcon}>💎</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.premiumTitle}>Upgrade to Premium</Text>
+                                <Text style={styles.premiumSubtitle}>Get unlimited appointments & analytics</Text>
+                            </View>
+                        </View>
+                        <Text style={styles.premiumArrow}>›</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+
                 {/* Pending Requests */}
                 {pendingRequests.length > 0 && (
                     <View style={styles.section}>
@@ -457,5 +481,52 @@ const createStyles = (theme: Theme) =>
         },
         bottomPadding: {
             height: 20,
+        },
+        premiumBanner: {
+            marginHorizontal: 20,
+            marginTop: 24,
+            borderRadius: 16,
+            overflow: 'hidden',
+            shadowColor: '#0055FF',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.2,
+            shadowRadius: 8,
+            elevation: 4,
+        },
+        premiumGradient: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 16,
+        },
+        premiumContent: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+        },
+        premiumIconContainer: {
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        premiumIcon: {
+            fontSize: 20,
+        },
+        premiumTitle: {
+            fontSize: 16,
+            fontWeight: '700',
+            color: '#fff',
+        },
+        premiumSubtitle: {
+            fontSize: 12,
+            color: 'rgba(255,255,255,0.8)',
+        },
+        premiumArrow: {
+            fontSize: 24,
+            color: '#fff',
+            opacity: 0.8,
         },
     });

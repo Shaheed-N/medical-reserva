@@ -164,6 +164,17 @@ export default function ProviderSettingsScreen() {
                     </View>
                 </View>
 
+                {/* Subscription */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Subscription Plan</Text>
+                    <SettingsItem
+                        icon="💎"
+                        label="Manage Subscription"
+                        value="Free Plan"
+                        onPress={() => router.push('/(provider)/subscription')}
+                    />
+                </View>
+
                 {/* Profile Settings */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>{t('provider.myProfile')}</Text>

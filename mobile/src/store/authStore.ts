@@ -26,6 +26,9 @@ export interface PatientProfile {
     chronic_conditions: string[];
     current_medications: string[];
     medical_notes?: string;
+    height?: number;
+    weight?: number;
+    address?: string;
 }
 
 export interface UserRole {

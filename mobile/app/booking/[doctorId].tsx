@@ -108,7 +108,7 @@ export default function BookingScreen() {
 
             const slot = slots.find(s => s.start_time === selectedSlot);
 
-            await bookAppointment({
+            const result = await bookAppointment({
                 patient_id: user.id,
                 doctor_id: doctorId,
                 branch_id: doctor.branch_id,
@@ -118,16 +118,10 @@ export default function BookingScreen() {
                 notes,
             });
 
-            Alert.alert(
-                t('booking.success'),
-                t('booking.successMessage'),
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => router.replace('/(tabs)/appointments'),
-                    },
-                ]
-            );
+            router.replace({
+                pathname: '/booking/success',
+                params: { appointmentId: result.id }
+            });
         } catch (error: any) {
             Alert.alert(t('errors.title'), error.message || t('errors.generic'));
         } finally {

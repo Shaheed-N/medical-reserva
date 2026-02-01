@@ -8,6 +8,7 @@ import {
     ViewStyle,
 } from 'react-native';
 import { useTheme, Theme } from '../../theme';
+import { Ionicons } from '@expo/vector-icons';
 
 interface DoctorCardProps {
     id: string;
@@ -77,7 +78,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                         <View style={styles.statsRow}>
                             {rating !== undefined && (
                                 <View style={styles.statItem}>
-                                    <Text style={styles.statIcon}>⭐</Text>
+                                    <Ionicons name="star" size={14} color="#FFD700" />
                                     <Text style={styles.statValue}>{rating.toFixed(1)}</Text>
                                     {reviewCount !== undefined && (
                                         <Text style={styles.statLabel}>({reviewCount})</Text>
@@ -86,7 +87,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                             )}
                             {experience !== undefined && (
                                 <View style={styles.statItem}>
-                                    <Text style={styles.statIcon}>🏥</Text>
+                                    <Ionicons name="briefcase-outline" size={14} color={theme.colors.primary} />
                                     <Text style={styles.statValue}>{experience}</Text>
                                     <Text style={styles.statLabel}>years</Text>
                                 </View>

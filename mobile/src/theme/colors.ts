@@ -2,45 +2,45 @@
 // Supports both light and dark modes
 
 export const Colors = {
-    // Primary Medical Teal
+    // Primary - Electric Blue
     primary: {
-        50: '#f0fdfa',
-        100: '#ccfbf1',
-        200: '#99f6e4',
-        300: '#5eead4',
-        400: '#2dd4bf',
-        500: '#14b8a6',
-        600: '#0d9488',
-        700: '#0f766e',
-        800: '#115e59',
-        900: '#134e4a',
-        950: '#042f2e',
+        50: '#e0f2ff',
+        100: '#bae2ff',
+        200: '#7ccaff',
+        300: '#40adff',
+        400: '#008cff',
+        500: '#0055FF', // Electric Blue
+        600: '#004ae6',
+        700: '#003eb3',
+        800: '#002f80',
+        900: '#002060', // Deep Cobalt
+        950: '#0a101f', // Surface Dark
     },
 
-    // Secondary Blue
+    // Secondary - Vibrant Cyan
     secondary: {
-        50: '#eff6ff',
-        100: '#dbeafe',
-        200: '#bfdbfe',
-        300: '#93c5fd',
-        400: '#60a5fa',
-        500: '#3b82f6',
-        600: '#2563eb',
-        700: '#1d4ed8',
-        800: '#1e40af',
-        900: '#1e3a8a',
+        50: '#e0fbff',
+        100: '#bdf5ff',
+        200: '#80eeff',
+        300: '#40e7ff',
+        400: '#00ddff', // Vibrant Cyan
+        500: '#00c5e6',
+        600: '#00abc4',
+        700: '#0090a3',
+        800: '#007582',
+        900: '#005b63',
     },
 
-    // Accent - Warm Orange
+    // Accent - Neon Glow
     accent: {
-        50: '#fff7ed',
-        100: '#ffedd5',
-        200: '#fed7aa',
-        300: '#fdba74',
-        400: '#fb923c',
-        500: '#f97316',
-        600: '#ea580c',
-        700: '#c2410c',
+        50: '#f0f6ff',
+        100: '#e0ebff',
+        200: '#bed3ff',
+        300: '#9dbbff',
+        400: '#7ba2ff',
+        500: '#4d8dff', // Neon Glow
+        600: '#3d7ae6',
+        700: '#2d67cc',
         800: '#9a3412',
         900: '#7c2d12',
     },
@@ -200,10 +200,10 @@ export const lightTheme: Theme = {
         textInverse: Colors.neutral[0],
 
         // Brand
-        primary: Colors.primary[700],
-        primaryLight: Colors.primary[50],
+        primary: Colors.primary[500],
+        primaryLight: Colors.primary[100],
         primaryDark: Colors.primary[900],
-        secondary: Colors.secondary[600],
+        secondary: Colors.secondary[400],
         accent: Colors.accent[500],
 
         // Semantic
@@ -215,22 +215,22 @@ export const lightTheme: Theme = {
         errorLight: Colors.error[50],
 
         // UI
-        border: Colors.neutral[200],
-        borderLight: Colors.neutral[100],
-        divider: Colors.neutral[100],
-        overlay: 'rgba(0, 0, 0, 0.5)',
-        shadow: 'rgba(0, 0, 0, 0.1)',
+        border: '#e0edff',
+        borderLight: '#f0f7ff',
+        divider: '#e0edff',
+        overlay: 'rgba(0, 0, 0, 0.4)',
+        shadow: 'rgba(0, 85, 255, 0.1)',
 
         // Input
-        inputBackground: Colors.neutral[50],
-        inputBorder: Colors.neutral[300],
-        inputText: Colors.neutral[900],
-        inputPlaceholder: Colors.neutral[400],
+        inputBackground: '#f0f7ff',
+        inputBorder: '#e0edff',
+        inputText: Colors.primary[900],
+        inputPlaceholder: '#94a3b8',
 
         // Tab bar
-        tabBar: Colors.neutral[0],
-        tabBarActive: Colors.primary[700],
-        tabBarInactive: Colors.neutral[400],
+        tabBar: 'rgba(255, 255, 255, 0.95)',
+        tabBarActive: Colors.primary[500],
+        tabBarInactive: '#94a3b8',
 
         // Status bar
         statusBar: 'dark-content',
@@ -244,10 +244,10 @@ export const lightTheme: Theme = {
         xxl: 48,
     },
     borderRadius: {
-        sm: 4,
-        md: 8,
-        lg: 12,
-        xl: 16,
+        sm: 8,
+        md: 12,
+        lg: 20,
+        xl: 32,
         full: 9999,
     },
     typography: {
@@ -294,21 +294,21 @@ export const darkTheme: Theme = {
         errorLight: Colors.error[900],
 
         // UI
-        border: Colors.neutral[700],
-        borderLight: Colors.neutral[800],
+        border: Colors.neutral[800],
+        borderLight: Colors.neutral[900],
         divider: Colors.neutral[800],
         overlay: 'rgba(0, 0, 0, 0.7)',
-        shadow: 'rgba(0, 0, 0, 0.3)',
+        shadow: 'rgba(0, 0, 0, 0.5)',
 
         // Input
-        inputBackground: Colors.neutral[800],
-        inputBorder: Colors.neutral[600],
+        inputBackground: Colors.neutral[900],
+        inputBorder: Colors.neutral[800],
         inputText: Colors.neutral[50],
         inputPlaceholder: Colors.neutral[500],
 
         // Tab bar
-        tabBar: Colors.neutral[900],
-        tabBarActive: Colors.primary[400],
+        tabBar: '#151f2b',
+        tabBarActive: Colors.secondary[400],
         tabBarInactive: Colors.neutral[500],
 
         // Status bar

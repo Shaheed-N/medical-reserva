@@ -1,0 +1,39 @@
+{
+    "expo": {
+        "name": "MedPlus Pro",
+        "slug": "medplus-professional",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "scheme": "medplus-pro",
+        "userInterfaceStyle": "automatic",
+        "newArchEnabled": true,
+        "splash": {
+            "image": "./assets/splash-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0055FF"
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.medplus.pro"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#0055FF"
+            },
+            "package": "com.medplus.pro"
+        },
+        "web": {
+            "bundler": "metro",
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            "expo-router",
+            "expo-secure-store"
+        ],
+        "experiments": {
+            "typedRoutes": true
+        }
+    }
+}

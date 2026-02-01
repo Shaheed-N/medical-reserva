@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from '../src/theme';
 import { useAuthStore } from '../src/store';
+import SplashScreen from '../src/components/SplashScreen';
 import '../src/locales';
 
 const queryClient = new QueryClient({
@@ -20,10 +21,15 @@ const queryClient = new QueryClient({
 function RootLayoutContent() {
     const { theme } = useTheme();
     const initialize = useAuthStore(state => state.initialize);
+    const [showSplash, setShowSplash] = useState(true);
 
     useEffect(() => {
         initialize();
     }, []);
+
+    if (showSplash) {
+        return <SplashScreen onFinish={() => setShowSplash(false)} />;
+    }
 
     return (
         <>

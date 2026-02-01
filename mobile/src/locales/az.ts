@@ -182,7 +182,6 @@ export default {
         cancel: 'Görüşü ləğv et',
         cancelConfirm: 'Bu görüşü ləğv etmək istədiyinizə əminsiniz?',
         cancelReason: 'Ləğv etmə səbəbi',
-        cancelled: 'Ləğv edildi',
         completed: 'Tamamlandı',
         pending: 'Gözləyir',
         confirmed: 'Təsdiqləndi',

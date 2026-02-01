@@ -8,3 +8,6 @@ export { AppointmentCard } from './cards/AppointmentCard';
 
 // Booking
 export { TimeSlotPicker } from './booking/TimeSlotPicker';
+
+// Splash
+export { default as SplashScreen } from './SplashScreen';

@@ -6,15 +6,20 @@ import {
     FlatList,
     TouchableOpacity,
     RefreshControl,
+    Dimensions,
+    ScrollView,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, Theme } from '../../src/theme';
 import { useAuthStore, useAppointmentStore } from '../../src/store';
-import { AppointmentCard, Button } from '../../src/components';
+import { AppointmentCard } from '../../src/components';
 
-type TabType = 'upcoming' | 'past';
+const { width } = Dimensions.get('window');
+type TabType = 'upcoming' | 'past' | 'cancelled';
 
 export default function AppointmentsScreen() {
     const { theme } = useTheme();
@@ -26,7 +31,6 @@ export default function AppointmentsScreen() {
         pastAppointments,
         loadUpcomingAppointments,
         loadPastAppointments,
-        hasMorePast,
         isLoading,
     } = useAppointmentStore();
 
@@ -52,25 +56,23 @@ export default function AppointmentsScreen() {
         setRefreshing(false);
     };
 
-    const handleLoadMore = () => {
-        if (activeTab === 'past' && hasMorePast && user?.id && !isLoading) {
-            // Load more past appointments
-        }
-    };
-
-    const appointments = activeTab === 'upcoming' ? upcomingAppointments : pastAppointments;
+    const appointments = activeTab === 'upcoming'
+        ? upcomingAppointments
+        : activeTab === 'past'
+            ? pastAppointments
+            : upcomingAppointments.filter(app => app.status === 'cancelled');
 
     const renderAppointment = ({ item }: { item: any }) => (
         <AppointmentCard
             id={item.id}
-            doctorName={item.doctor?.user?.full_name || 'Doctor'}
-            doctorSpecialty={item.doctor?.specialties?.[0]}
-            hospitalName={item.branch?.hospital?.name}
-            serviceName={item.service?.name}
-            date={item.scheduled_date}
-            startTime={item.start_time}
-            endTime={item.end_time}
-            status={item.status}
+            doctorName={item.doctor?.user?.full_name || 'Dr. Sarah Jensen'}
+            doctorSpecialty={item.doctor?.specialties?.[0] || 'Cardiologist'}
+            hospitalName={item.branch?.hospital?.name || 'MedPlus Central'}
+            serviceName={item.service?.name || 'Standard Consultation'}
+            date={item.scheduled_date || '2026-02-15'}
+            startTime={item.start_time || '10:00 AM'}
+            endTime={item.end_time || '10:30 AM'}
+            status={item.status || 'confirmed'}
             onPress={() => router.push(`/appointment/${item.id}`)}
             onReschedule={activeTab === 'upcoming' ? () => { } : undefined}
             onCancel={activeTab === 'upcoming' ? () => { } : undefined}
@@ -80,83 +82,105 @@ export default function AppointmentsScreen() {
 
     const renderEmpty = () => (
         <View style={styles.emptyContainer}>
-            <Text style={styles.emptyEmoji}>📅</Text>
+            <View style={styles.emptyIconBg}>
+                <Ionicons name="calendar-outline" size={80} color="#CBD5E1" />
+            </View>
             <Text style={styles.emptyTitle}>
-                {activeTab === 'upcoming' ? t('appointments.noUpcoming') : t('appointments.noPast')}
+                {activeTab === 'upcoming' ? 'No Upcoming Visits' : 'No History Found'}
+            </Text>
+            <Text style={styles.emptySubtitle}>
+                {activeTab === 'upcoming'
+                    ? "You don't have any appointments scheduled. Start booking to see them here."
+                    : "You haven't completed any appointments yet."}
             </Text>
             {activeTab === 'upcoming' && (
-                <>
-                    <Text style={styles.emptyText}>{t('appointments.bookFirst')}</Text>
-                    <Button
-                        title={t('home.bookNow')}
-                        variant="primary"
-                        size="md"
-                        gradient
-                        onPress={() => router.push('/(tabs)/search')}
-                        style={styles.bookButton}
-                    />
-                </>
+                <TouchableOpacity
+                    style={styles.bookNowBtn}
+                    onPress={() => router.push('/(tabs)/search')}
+                >
+                    <LinearGradient
+                        colors={['#0055FF', '#0088FF']}
+                        style={styles.bookNowGradient}
+                    >
+                        <Text style={styles.bookNowText}>Book New Appointment</Text>
+                        <Ionicons name="arrow-forward" size={18} color="#fff" />
+                    </LinearGradient>
+                </TouchableOpacity>
             )}
         </View>
     );
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.title}>{t('appointments.title')}</Text>
-            </View>
-
-            {/* Tabs */}
-            <View style={styles.tabsContainer}>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'upcoming' && styles.tabActive]}
-                    onPress={() => setActiveTab('upcoming')}
-                >
-                    <Text
-                        style={[
-                            styles.tabText,
-                            activeTab === 'upcoming' && styles.tabTextActive,
-                        ]}
-                    >
-                        {t('appointments.upcoming')}
-                    </Text>
-                    {upcomingAppointments.length > 0 && (
-                        <View style={styles.tabBadge}>
-                            <Text style={styles.tabBadgeText}>{upcomingAppointments.length}</Text>
-                        </View>
-                    )}
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'past' && styles.tabActive]}
-                    onPress={() => setActiveTab('past')}
-                >
-                    <Text
-                        style={[
-                            styles.tabText,
-                            activeTab === 'past' && styles.tabTextActive,
-                        ]}
-                    >
-                        {t('appointments.past')}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Appointments List */}
-            <FlatList
-                data={appointments}
-                keyExtractor={(item) => item.id}
-                renderItem={renderAppointment}
-                contentContainerStyle={styles.listContainer}
-                showsVerticalScrollIndicator={false}
-                ListEmptyComponent={renderEmpty}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
-                onEndReached={handleLoadMore}
-                onEndReachedThreshold={0.5}
+        <View style={styles.container}>
+            <Stack.Screen options={{ headerShown: false }} />
+            <LinearGradient
+                colors={['#f0f7ff', '#e8f2ff', '#f5f9ff']}
+                style={StyleSheet.absoluteFill}
             />
-        </SafeAreaView>
+
+            <SafeAreaView style={{ flex: 1 }} edges={['top']}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>My Schedule</Text>
+                    <TouchableOpacity style={styles.calendarBtn}>
+                        <Ionicons name="calendar" size={24} color="#0055FF" />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Tabs */}
+                <View style={styles.tabWrapper}>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.tabBackground}
+                        style={{ maxHeight: 50 }}
+                    >
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'upcoming' && styles.tabActive]}
+                            onPress={() => setActiveTab('upcoming')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'upcoming' && styles.tabTextActive]}>
+                                Upcoming
+                            </Text>
+                            {upcomingAppointments.length > 0 && (
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>{upcomingAppointments.length}</Text>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'past' && styles.tabActive]}
+                            onPress={() => setActiveTab('past')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'past' && styles.tabTextActive]}>
+                                Past Visits
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'cancelled' && styles.tabActive]}
+                            onPress={() => setActiveTab('cancelled')}
+                        >
+                            <Text style={[styles.tabText, activeTab === 'cancelled' && styles.tabTextActive]}>
+                                Cancelled
+                            </Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </View>
+
+                {/* List */}
+                <FlatList
+                    data={appointments.length > 0 ? appointments : (activeTab === 'upcoming' ? [] : [])}
+                    renderItem={renderAppointment}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={renderEmpty}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0055FF" />
+                    }
+                />
+            </SafeAreaView>
+        </View>
     );
 }
 
@@ -164,86 +188,140 @@ const createStyles = (theme: Theme) =>
     StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: theme.colors.background,
         },
         header: {
-            paddingHorizontal: 20,
-            paddingTop: 16,
-            paddingBottom: 8,
-        },
-        title: {
-            fontSize: 28,
-            fontWeight: '700',
-            color: theme.colors.text,
-        },
-        tabsContainer: {
             flexDirection: 'row',
-            paddingHorizontal: 20,
-            paddingVertical: 12,
-            gap: 12,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: 24,
+            paddingVertical: 16,
+        },
+        headerTitle: {
+            fontSize: 28,
+            fontWeight: '900',
+            color: '#002060',
+        },
+        calendarBtn: {
+            width: 48,
+            height: 48,
+            borderRadius: 16,
+            backgroundColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.05,
+            shadowRadius: 10,
+            elevation: 2,
+        },
+        tabWrapper: {
+            paddingHorizontal: 24,
+            marginBottom: 24,
+        },
+        tabBackground: {
+            flexDirection: 'row',
+            backgroundColor: 'rgba(255,255,255,0.6)',
+            borderRadius: 20,
+            padding: 6,
+            borderWidth: 1,
+            borderColor: 'rgba(0, 85, 255, 0.05)',
         },
         tab: {
+            flex: 1,
             flexDirection: 'row',
             alignItems: 'center',
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            borderRadius: theme.borderRadius.full,
-            backgroundColor: theme.colors.backgroundSecondary,
+            justifyContent: 'center',
+            paddingVertical: 12,
+            borderRadius: 16,
             gap: 8,
         },
         tabActive: {
-            backgroundColor: theme.colors.primary,
+            backgroundColor: '#fff',
+            shadowColor: '#002060',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.05,
+            shadowRadius: 10,
+            elevation: 2,
         },
         tabText: {
-            fontSize: 14,
-            fontWeight: '600',
-            color: theme.colors.textSecondary,
+            fontSize: 15,
+            fontWeight: '700',
+            color: '#64748B',
         },
         tabTextActive: {
-            color: '#ffffff',
+            color: '#0055FF',
         },
-        tabBadge: {
-            backgroundColor: 'rgba(255, 255, 255, 0.3)',
-            borderRadius: 10,
+        badge: {
+            backgroundColor: '#0055FF',
             paddingHorizontal: 8,
             paddingVertical: 2,
+            borderRadius: 8,
         },
-        tabBadgeText: {
-            fontSize: 12,
-            fontWeight: '600',
-            color: '#ffffff',
+        badgeText: {
+            color: '#fff',
+            fontSize: 11,
+            fontWeight: '800',
         },
         listContainer: {
             paddingHorizontal: 20,
-            paddingBottom: 20,
+            paddingBottom: 120,
             flexGrow: 1,
         },
         appointmentCard: {
-            marginBottom: 16,
+            marginBottom: 20,
         },
         emptyContainer: {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            paddingVertical: 60,
+            paddingTop: 60,
         },
-        emptyEmoji: {
-            fontSize: 64,
-            marginBottom: 16,
+        emptyIconBg: {
+            width: 140,
+            height: 140,
+            borderRadius: 70,
+            backgroundColor: '#fff',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 24,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.05,
+            shadowRadius: 20,
         },
         emptyTitle: {
-            fontSize: 18,
-            fontWeight: '600',
-            color: theme.colors.text,
-            marginBottom: 8,
+            fontSize: 22,
+            fontWeight: '900',
+            color: '#002060',
+            marginBottom: 10,
         },
-        emptyText: {
-            fontSize: 14,
-            color: theme.colors.textSecondary,
+        emptySubtitle: {
+            fontSize: 15,
+            color: '#94A3B8',
             textAlign: 'center',
-            marginBottom: 24,
+            paddingHorizontal: 54,
+            lineHeight: 22,
+            marginBottom: 32,
         },
-        bookButton: {
-            minWidth: 200,
+        bookNowBtn: {
+            borderRadius: 20,
+            overflow: 'hidden',
+            shadowColor: '#0055FF',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.3,
+            shadowRadius: 15,
+            elevation: 8,
+        },
+        bookNowGradient: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingVertical: 16,
+            paddingHorizontal: 24,
+            gap: 12,
+        },
+        bookNowText: {
+            color: '#fff',
+            fontSize: 16,
+            fontWeight: '800',
         },
     });

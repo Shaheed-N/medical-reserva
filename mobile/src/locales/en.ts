@@ -182,7 +182,6 @@ export default {
         cancel: 'Cancel Appointment',
         cancelConfirm: 'Are you sure you want to cancel this appointment?',
         cancelReason: 'Reason for cancellation',
-        cancelled: 'Cancelled',
         completed: 'Completed',
         pending: 'Pending Confirmation',
         confirmed: 'Confirmed',

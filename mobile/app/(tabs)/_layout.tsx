@@ -1,109 +1,241 @@
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme, Theme } from '../../src/theme';
-import { useTranslation } from 'react-i18next';
+import { View, StyleSheet, Platform, Animated, Dimensions, TouchableOpacity } from 'react-native';
+import { useTheme } from '../../src/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { useRef, useEffect, useState } from 'react';
 
-function TabBarIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const TAB_BAR_MARGIN = 20;
+const TAB_BAR_WIDTH = SCREEN_WIDTH - (TAB_BAR_MARGIN * 2);
+const TAB_WIDTH = (TAB_BAR_WIDTH - 16) / 5; // 16 is paddingHorizontal of the container
+
+function TabBarIcon({ name, focused, index }: { name: string; focused: boolean; index: number }) {
+    const { theme, colorScheme } = useTheme();
+    const scaleAnim = useRef(new Animated.Value(0)).current;
+    const translateY = useRef(new Animated.Value(20)).current;
+
     const icons: Record<string, string> = {
-        home: '🏠',
-        search: '🔍',
-        appointments: '📅',
-        profile: '👤',
+        home: focused ? 'grid' : 'grid-outline',
+        clinics: focused ? 'business' : 'business-outline',
+        search: focused ? 'people' : 'people-outline',
+        appointments: focused ? 'calendar' : 'calendar-outline',
+        profile: focused ? 'person' : 'person-outline',
     };
 
+    useEffect(() => {
+        Animated.sequence([
+            Animated.delay(index * 60),
+            Animated.parallel([
+                Animated.spring(scaleAnim, {
+                    toValue: 1,
+                    friction: 7,
+                    tension: 60,
+                    useNativeDriver: true,
+                }),
+                Animated.spring(translateY, {
+                    toValue: 0,
+                    friction: 7,
+                    tension: 60,
+                    useNativeDriver: true,
+                }),
+            ]),
+        ]).start();
+    }, []);
+
+    useEffect(() => {
+        Animated.parallel([
+            Animated.spring(scaleAnim, {
+                toValue: focused ? 1.2 : 1,
+                friction: 5,
+                tension: 100,
+                useNativeDriver: true,
+            }),
+            Animated.spring(translateY, {
+                toValue: focused ? -4 : 0,
+                friction: 5,
+                tension: 100,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, [focused]);
+
     return (
-        <View style={styles.iconContainer}>
-            <Text style={[styles.icon, { opacity: focused ? 1 : 0.6 }]}>
-                {icons[name]}
-            </Text>
-        </View>
+        <Animated.View style={[
+            styles.tabItem,
+            {
+                transform: [
+                    { scale: scaleAnim },
+                    { translateY: translateY },
+                ]
+            }
+        ]}>
+            <Ionicons
+                name={icons[name] as any}
+                size={26}
+                color={focused ? theme.colors.primary : colorScheme === 'dark' ? '#64748B' : '#94A3B8'}
+            />
+        </Animated.View>
+    );
+}
+
+function CustomTabBar({ state, descriptors, navigation }: any) {
+    const { theme, colorScheme } = useTheme();
+    const pillAnim = useRef(new Animated.Value(state.index * TAB_WIDTH)).current;
+    const barTranslateY = useRef(new Animated.Value(100)).current;
+
+    useEffect(() => {
+        Animated.spring(barTranslateY, {
+            toValue: 0,
+            friction: 8,
+            tension: 40,
+            delay: 300,
+            useNativeDriver: true,
+        }).start();
+    }, []);
+
+    useEffect(() => {
+        Animated.spring(pillAnim, {
+            toValue: state.index * TAB_WIDTH,
+            friction: 8,
+            tension: 60,
+            useNativeDriver: true,
+        }).start();
+    }, [state.index]);
+
+    return (
+        <Animated.View style={[
+            styles.tabBarContainer,
+            {
+                backgroundColor: colorScheme === 'dark'
+                    ? 'rgba(15, 23, 42, 0.98)'
+                    : 'rgba(255, 255, 255, 0.98)',
+                borderColor: colorScheme === 'dark'
+                    ? 'rgba(0, 85, 255, 0.3)'
+                    : 'rgba(0, 85, 255, 0.08)',
+                transform: [{ translateY: barTranslateY }],
+            }
+        ]}>
+            {Platform.OS === 'ios' && (
+                <BlurView
+                    intensity={90}
+                    style={[StyleSheet.absoluteFill, { borderRadius: 36, overflow: 'hidden' }]}
+                    tint={colorScheme === 'dark' ? 'dark' : 'light'}
+                />
+            )}
+
+            <View style={styles.tabItemsContainer}>
+                {/* Sliding Pill */}
+                <Animated.View style={[
+                    styles.pill,
+                    {
+                        width: TAB_WIDTH,
+                        backgroundColor: theme.colors.primary + '15',
+                        transform: [{ translateX: pillAnim }],
+                    }
+                ]}>
+                    <View style={[styles.pillInner, { backgroundColor: theme.colors.primary }]} />
+                </Animated.View>
+
+                {state.routes.map((route: any, index: number) => {
+                    const { options } = descriptors[route.key];
+                    const isFocused = state.index === index;
+
+                    const onPress = () => {
+                        const event = navigation.emit({
+                            type: 'tabPress',
+                            target: route.key,
+                            canPreventDefault: true,
+                        });
+
+                        if (!isFocused && !event.defaultPrevented) {
+                            navigation.navigate(route.name);
+                        }
+                    };
+
+                    return (
+                        <TouchableOpacity
+                            key={route.key}
+                            onPress={onPress}
+                            style={styles.tabTouchable}
+                            activeOpacity={0.7}
+                        >
+                            <TabBarIcon
+                                name={route.name}
+                                focused={isFocused}
+                                index={index}
+                            />
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+        </Animated.View>
     );
 }
 
 export default function TabsLayout() {
-    const { theme } = useTheme();
-    const { t } = useTranslation();
-
     return (
         <Tabs
+            tabBar={props => <CustomTabBar {...props} />}
             screenOptions={{
-                headerStyle: {
-                    backgroundColor: theme.colors.background,
-                    elevation: 0,
-                    shadowOpacity: 0,
-                    borderBottomWidth: 0,
-                },
-                headerTitleStyle: {
-                    fontWeight: '600',
-                    color: theme.colors.text,
-                },
-                tabBarStyle: {
-                    backgroundColor: theme.colors.tabBar,
-                    borderTopColor: theme.colors.border,
-                    borderTopWidth: 1,
-                    paddingTop: 8,
-                    paddingBottom: 8,
-                    height: 70,
-                },
-                tabBarActiveTintColor: theme.colors.tabBarActive,
-                tabBarInactiveTintColor: theme.colors.tabBarInactive,
-                tabBarLabelStyle: {
-                    fontSize: 12,
-                    fontWeight: '500',
-                    marginTop: 4,
-                },
+                headerShown: false,
+                tabBarShowLabel: false,
+                animation: 'fade',
             }}
         >
-            <Tabs.Screen
-                name="home"
-                options={{
-                    title: t('tabs.home'),
-                    headerShown: false,
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabBarIcon name="home" focused={focused} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="search"
-                options={{
-                    title: t('tabs.search'),
-                    headerShown: false,
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabBarIcon name="search" focused={focused} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="appointments"
-                options={{
-                    title: t('tabs.appointments'),
-                    headerShown: false,
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabBarIcon name="appointments" focused={focused} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: t('tabs.profile'),
-                    headerShown: false,
-                    tabBarIcon: ({ focused, color }) => (
-                        <TabBarIcon name="profile" focused={focused} color={color} />
-                    ),
-                }}
-            />
+            <Tabs.Screen name="home" />
+            <Tabs.Screen name="clinics" />
+            <Tabs.Screen name="search" />
+            <Tabs.Screen name="appointments" />
+            <Tabs.Screen name="profile" />
         </Tabs>
     );
 }
 
 const styles = StyleSheet.create({
-    iconContainer: {
+    tabBarContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: TAB_BAR_MARGIN,
+        right: TAB_BAR_MARGIN,
+        height: 72,
+        borderRadius: 36,
+        borderWidth: 1.5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 20,
+        overflow: 'hidden',
+    },
+    tabItemsContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        paddingHorizontal: 8,
+        alignItems: 'center',
+    },
+    tabTouchable: {
+        flex: 1,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    tabItem: {
         alignItems: 'center',
         justifyContent: 'center',
     },
-    icon: {
-        fontSize: 24,
+    pill: {
+        position: 'absolute',
+        height: 54,
+        borderRadius: 27,
+        left: 8,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingBottom: 8,
     },
+    pillInner: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+    }
 });

@@ -182,7 +182,6 @@ export default {
         cancel: 'Отменить запись',
         cancelConfirm: 'Вы уверены, что хотите отменить эту запись?',
         cancelReason: 'Причина отмены',
-        cancelled: 'Отменено',
         completed: 'Завершено',
         pending: 'Ожидает подтверждения',
         confirmed: 'Подтверждено',
